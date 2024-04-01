@@ -1,72 +1,62 @@
 # Usage
 
-docker vulumeの名前はmlflowv3にしている．コンフリクトが発生した場合は適宜変更すること．その場合，このページのmlflowv3を別のボリューム名に変更すること．
+The name of the Docker volume is set to "mlflowv3". Change it accordingly in case of conflicts. In such cases, modify "mlflowv3" on this page to a different volume name.
 
-## 1.docker volumeを作成する．
+## 1. Creating a Docker Volume
 
 ```sh
 docker volume create mlflowv3
 ```
 
-## 2.コンテナを起動する．
+## 2. Starting the Containers
 
 ```sh
 docker-compose up -d
 ```
 
-ログを確認してコンテナが起動していることを確認する．
-確認出来たらCTRL+cでログを閉じる．
+Check the logs to ensure that the containers are running. Once confirmed, close the logs with CTRL+C.
 
 ```sh
 docker-compose logs --follow
 ```
 
-[qiitaの記事](https://qiita.com/c60evaporator/items/e1fd57a0263a19b629d1#%E3%82%B7%E3%83%8A%E3%83%AA%E3%82%AA4-mlflow-with-remote-tracking-server-backend-and-artifact-stores)からftp-serverをローカルで作成するように変更した．
-.envは適当に作成すること．
+Changed to create an ftp-server locally based on [this Qiita article](https://qiita.com/c60evaporator/items/e1fd57a0263a19b629d1#%E3%82%B7%E3%83%8A%E3%83%AA%E3%82%AA4-mlflow-with-remote-tracking-server-backend-and-artifact-stores). .env file should be created as necessary.
 
-## **ちょっと重要** : データベースのファイルに直にアクセスする．
+## **A bit important**: Accessing Database Files Directly
 
-今の設定ではボリューム保存されたデータファイルに直にアクセスするのが難しい．
-そのため，データファイルをデバッグするときなど，下のコマンドでコンテナ内に入る．
-適宜コンテナ名を変更すること．\
-`docker-compose exec`ではなぜかshが立ち上がらなかった．
+With the current settings, accessing the data files saved in the volume directly is difficult. Therefore, when debugging data files, etc., enter the container with the following command. Change the container name as appropriate. \
+`docker-compose exec` did not start sh for some reason.
 
 ```sh
 docker exec -it db-server sh
 ```
 
-上のコマンドでコンテナに入った後，`/var/lib/mysql`(postgressを使う場合はたぶん`/var/lib/postgres/data`)でデータベースのファイルをデバッグするか，下のコマンドでマウントしたホストのディレクトリにデータベースのファイルをコピーする．
+After entering the container with the above command, debug the database files in `/var/lib/mysql` (probably `/var/lib/postgres/data` if using Postgres), or copy the database files to a directory mounted by the following command.
 
 ```sh
 cp -r /var/lib/mysql /data_backup
 ```
 
-## **重要** : エラーとかでコンテナを再作成する場合
+## **Important**: Re-creating Containers in Case of Errors, etc.
 
-docker-compose.yamlそのままの設定ではデータベースが空のデータベースで初期化される．
-逆に/var/lib/mysqlにデータが存在するとき**初期化できずにエラー落ちする．**
-そのため以下のコードでボリュームを再生成する．
-当然ボリュームの中のデータは全て破棄される．
-データのバックアップを取りたいときは[上](#**ちょっと重要**-:-データベースのファイルに直にアクセスする．)を参考に．
+With the settings as is in the docker-compose.yaml, the database is initialized as an empty database. Conversely, when there is data in `/var/lib/mysql`, **it fails to initialize with an error**. Therefore, recreate the volume with the following code. Naturally, all data within the volume will be discarded. Refer to [the section above](#**A bit important**: Accessing Database Files Directly) if you want to take a backup of the data.
 
 ```sh
 docker volume rm mlflowv3
 docker volume create mlflowv3
 ```
 
-## 構成
+## Configuration
 
 ```mermaid
-
 flowchart LR;
-id3(viewer: web browser) <-- manual request, visual data-->　id1[tracking server: port 5001]
+id3(viewer: web browser) <-- manual request, visual data--> id1[tracking server: port 5001]
 subgraph Server;
 id1 <-- request, new data --> id2[(dbserver: port 5432)];
 id1 <-- request, data --> id4[(artifact server: port 80)];
 end;
 ```
 
-## 参考
+## References
 
 https://qiita.com/c60evaporator/items/e1fd57a0263a19b629d1
-
