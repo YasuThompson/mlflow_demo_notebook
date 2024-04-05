@@ -21,6 +21,7 @@ Open `http://127.0.0.1:8081` in a browser
 In another terminal window
 ```commandline
 source venv/bin/activate
+export MLFLOW_TRACKING_URI=http://127.0.0.1:8081 
 cd 1_localhost
 python local_deployment_demo.py
 ```
