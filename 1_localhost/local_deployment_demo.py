@@ -92,7 +92,6 @@ space = {
 
 mlflow.set_experiment("/wine-quality")
 with mlflow.start_run():
-# if True:
     # Conduct the hyperparameter search using Hyperopt
     trials = Trials()
     best = fmin(

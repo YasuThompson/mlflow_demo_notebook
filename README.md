@@ -21,7 +21,7 @@ In another terminal window
 ```commandline
 source venv/bin/activate
 cd 1_localhost
-python train_manual_log.py
+python local_deployment_demo.py
 ```
 In the UI, register a model like in the figure below. 
 ```commandline
