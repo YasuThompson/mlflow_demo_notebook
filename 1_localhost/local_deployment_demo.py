@@ -5,6 +5,9 @@ from hyperopt import STATUS_OK, Trials, fmin, hp, tpe
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 import mlflow
 from mlflow.models import infer_signature
 

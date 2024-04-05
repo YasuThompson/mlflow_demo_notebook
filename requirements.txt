@@ -3,3 +3,4 @@ scikit-learn
 mlflow
 tensorflow
 keras
+hyperopt
