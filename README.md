@@ -37,7 +37,12 @@ And deploy the model, spefifying the
 ```commandline
 mlflow models serve -m models:/sample_model/1 --port 5001 
 ```
-Note 1: you might need to handle the issues like in [this link](https://stackoverflow.com/questions/75534090/mlflow-model-serve-cant-find-pyenv). <br>
+Note 1: you might need to handle the issues like in [this link](https://stackoverflow.com/questions/75534090/mlflow-model-serve-cant-find-pyenv), running the commands below. <br>
+```commandline
+curl https://pyenv.run | bash
+python -m  pip install virtualenv
+PATH="$HOME/.pyenv/bin:$PATH"
+```
 Note 2: If the deployment command above does not work, you can deploy the model also by specifying the model path like `-m <path-of-a-model>` instead of `models:/<model-name>/<model-version>`
 
 In another terminal window, curl the endpoint just made 
